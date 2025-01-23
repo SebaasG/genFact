@@ -20,8 +20,8 @@ class ProductComponent extends HTMLElement {
             <input type="text" class="form-control" disabled id="unitValue">
           </div>
           <div class="flex-grow-1">
-            <label for="lastClient" class="form-label">Amount</label>
-            <input type="text" class="form-control" id="lastClient">
+            <label for="amountProd" class="form-label">Amount</label>
+            <input type="text" class="form-control" id="amountProd">
           </div>
         </div>
 
@@ -42,9 +42,10 @@ class ProductComponent extends HTMLElement {
       this.loadCode();
     })
 
-    this.loadProducts(); // Llamada directa sin necesidad de DOMContentLoaded
+    this.loadProducts(); 
   }
 
+  //Funcion para llenar la info en base la bd
   loadProducts() {
     fetch("http://localhost:3000/products")
       .then(response => response.json())
@@ -68,6 +69,7 @@ class ProductComponent extends HTMLElement {
       .catch(error => console.error("Error fetching products:", error));
   }
 
+  //Funcion para trar data segun el select 
   loadCode() {
     const selectedValue = this.shadowRoot.getElementById("selectProd").value;
     const codeInput = this.shadowRoot.getElementById("codeNumber");
@@ -84,8 +86,6 @@ class ProductComponent extends HTMLElement {
 
       const inputValue = this.shadowRoot.getElementById("unitValue");
       inputValue.value = value;
-
-      
 
     } else {
       alert("Product not found");
@@ -106,9 +106,13 @@ class ProductComponent extends HTMLElement {
     const address = userComponent.shadowRoot.getElementById("address").value;
     const email = userComponent.shadowRoot.getElementById("email").value;
 
+    const codeProd = this.shadowRoot.getElementById("codeNumber").value;
+    const value = this.shadowRoot.getElementById("unitValue").value;
+    const amount = this.shadowRoot.getElementById("amountProd").value;
+
     // Enviar los datos a través de un CustomEvent
     userComponent.dispatchEvent(new CustomEvent("userDataSubmitted", {
-      detail: { name, lastName, address, email }
+      detail: { name, lastName, address, email, codeProd, value, amount }
     }));
   }
 }

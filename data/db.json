@@ -20,6 +20,9 @@
       { "id": 18, "name": "Cebollas 1kg", "value": 3500, "stock": 20 },
       { "id": 19, "name": "Papaya 1kg", "value": 4500, "stock": 25 },
       { "id": 20, "name": "Papas 1kg", "value": 2500, "stock": 40 }
+    ],
+    "Invoices": [
+        
     ]
   }
   
