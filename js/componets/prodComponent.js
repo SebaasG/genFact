@@ -7,18 +7,17 @@ class ProductComponent extends HTMLElement {
       <form>
         <label for="selectProd" class="form-label">Select Product</label>
         <select class="form-select" aria-label="Default select example" id="selectProd">
-          <option selected>...</option>
         </select>
 
         <div class="mb-3">
-          <label for="invNumber" class="form-label">Name Product</label>
-          <input type="number" class="form-control" id="invNumber" disabled aria-describedby="numberFact">
+          <label for="codeNumber" class="form-label">Code</label>
+          <input type="text" class="form-control" id="codeNumber" disabled aria-describedby="numberFact">
         </div>
 
         <div class="d-flex gap-3">
           <div class="flex-grow-1">
-            <label for="nameClient" class="form-label">Unit Value</label>
-            <input type="text" class="form-control" id="nameClient">
+            <label for="unitValue" class="form-label">Unit Value</label>
+            <input type="text" class="form-control" disabled id="unitValue">
           </div>
           <div class="flex-grow-1">
             <label for="lastClient" class="form-label">Amount</label>
@@ -35,29 +34,73 @@ class ProductComponent extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.querySelector("#submitBtn").addEventListener("click", (event) => {
-      event.preventDefault(); // Prevenir el comportamiento por defecto de submit
+      event.preventDefault(); 
       this.collectUserData();
     });
 
-    this.shadowRoot.addEventListener("DOMContentLoaded", this.loadProducts());
+    this.shadowRoot.getElementById("selectProd").addEventListener("change", () => {
+      this.loadCode();
+    })
+
+    this.loadProducts(); // Llamada directa sin necesidad de DOMContentLoaded
   }
 
-  loadProducts(){
-      fetch("http://localHost:3000/products")
+  loadProducts() {
+    fetch("http://localhost:3000/products")
       .then(response => response.json())
       .then(products => {
         const productSelect = this.shadowRoot.getElementById("selectProd");
-        productSelect.innerHTML = /*html*/ `
-        ` 
-        console.log(JSON.stringify(products))
+        productSelect.innerHTML = "";
+  
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "Choose product...";
+        productSelect.appendChild(defaultOption);
+  
+        // Iterar sobre los productos usando forEach nativo de JavaScript
+        products.forEach(product => {
+          const option = document.createElement("option");
+          option.value = product.id;
+          option.textContent = product.name;
+          productSelect.appendChild(option);
+        });
       })
+      .catch(error => console.error("Error fetching products:", error));
   }
 
-
+  loadCode() {
+    const selectedValue = this.shadowRoot.getElementById("selectProd").value;
+    const codeInput = this.shadowRoot.getElementById("codeNumber");
   
+    codeInput.value = selectedValue;
+    alert("This is codeinput value: " + codeInput.value);
+    
+    fetch(`http://localhost:3000/products?id=${selectedValue}`)
+  .then(response => response.json())
+  .then(products => {
+    if (products.length > 0) {
+      const product = products[0]; 
+      const value = product.value; 
+
+      const inputValue = this.shadowRoot.getElementById("unitValue");
+      inputValue.value = value;
+
+      
+
+    } else {
+      alert("Product not found");
+    }
+  })
+  .catch(error => console.error("Error fetching product:", error));
+
+  }
+  
+  
+  
+
   collectUserData() {
     const userComponent = document.querySelector("user-component");
-    
+
     const name = userComponent.shadowRoot.getElementById("nameClient").value;
     const lastName = userComponent.shadowRoot.getElementById("lastClient").value;
     const address = userComponent.shadowRoot.getElementById("address").value;
