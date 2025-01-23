@@ -5,8 +5,12 @@ class UserComponent extends HTMLElement {
     this.shadowRoot.innerHTML = /*html */ `
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
       <form id="user-form">
+        <div class= "d-flex justify-content-center"> 
+          <h1>Invoice</h1>
+        </div>
         <div class="mb-3">
-          <label for="invNumber" class="form-label">Invoice Number</label>
+    
+          <label for="invNumber" class="form-label mt-3">Invoice Number</label>
           <input type="number" class="form-control" id="invNumber" disabled aria-describedby="numberFact">
         </div>
 

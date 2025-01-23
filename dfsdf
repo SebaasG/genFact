@@ -1,0 +1,10 @@
+  // loadProducts(){
+  //     fetch("http://localHost:3000/products")
+  //     .then(response => response.json())
+  //     .then(products => {
+  //       const productSelect = this.shadowRoot.getElementById("selectProd");
+  //       productSelect.innerHTML = /*html*/ `
+  //       ` 
+  //       console.log(JSON.stringify(response))
+  //     })
+  // }
