@@ -26,10 +26,24 @@ class ProductComponent extends HTMLElement{
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary d-flex justify-content-center no-wrap">Submit</button>
+        <button type="submit" id ="submitBtn" class="btn btn-primary d-flex justify-content-center no-wrap">Submit</button>
         </form>
         `;
     }
-}
+    connectedCallback() {
+      this.shadowRoot.querySelector("#submitBtn").addEventListener("click", () => {
+        const userComponent = document.querySelector("user-component");
+        const name = userComponent.shadowRoot.getElementById("nameClient").value;
+        const lastName = userComponent.shadowRoot.getElementById("lastClient").value;
+        const addres = userComponent.shadowRoot.getElementById("address").value;
+        const email = userComponent.shadowRoot.getElementById("email").value;
+  
+        userComponent.dispatchEvent(new CustomEvent("userDataSubmitted", {
+          detail: { name, lastName, addres, email }
+        }));
+      });
+    }
+  }
+
 
 customElements.define("product-component", ProductComponent)
