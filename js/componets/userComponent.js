@@ -1,3 +1,5 @@
+import { createNumberFact } from "../controllers/userController.js";
+
 class UserComponent extends HTMLElement {
   constructor() {
     super();
@@ -39,25 +41,9 @@ class UserComponent extends HTMLElement {
 
       </form>`;
   }
-
-  // connectedCallback() {
-  //   this.shadowRoot.querySelector("#user-form").addEventListener("submit", this.handleFormSubmit.bind(this));
-  // }
-
-  // handleFormSubmit(event) {
-  //   event.preventDefault();
-  //   console.log("Formulario enviado!");
-    
-  //   const name = this.shadowRoot.getElementById("nameClient").value;
-  //   const lastName =  this.shadowRoot.getElementById("lastClient").value;
-  //   const addres = this.shadowRoot.getElementById("address").value;
-  //   const email = this.shadowRoot.getElementById("email").value;
-
-  //   this.dispatchEvent(new CustomEvent("userDataSubmitted", {
-  //     detail: { name, lastName, addres, email }
-  //   }));
-  // }
+  connectedCallback() {
+    createNumberFact(this);
+  }
 }
-
 
 customElements.define("user-component", UserComponent);

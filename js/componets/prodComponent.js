@@ -1,3 +1,6 @@
+import { loadProducts, loadCode } from "../controllers/prodController.js";
+import { collectUserData } from "../controllers/userController.js";
+
 class ProductComponent extends HTMLElement {
   constructor() {
     super();
@@ -33,87 +36,20 @@ class ProductComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.querySelector("#submitBtn").addEventListener("click", (event) => {
-      event.preventDefault(); 
-      this.collectUserData();
-    });
+    loadProducts(this);
 
-    this.shadowRoot.getElementById("selectProd").addEventListener("change", () => {
-      this.loadCode();
-    })
+    this.shadowRoot
+      .querySelector("#submitBtn")
+      .addEventListener("click", (event) => {
+        event.preventDefault();
+        collectUserData(this);
+      });
 
-    this.loadProducts(); 
-  }
-
-  //Funcion para llenar la info en base la bd
-  loadProducts() {
-    fetch("http://localhost:3000/products")
-      .then(response => response.json())
-      .then(products => {
-        const productSelect = this.shadowRoot.getElementById("selectProd");
-        productSelect.innerHTML = "";
-  
-        const defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.textContent = "Choose product...";
-        productSelect.appendChild(defaultOption);
-  
-        // Iterar sobre los productos usando forEach nativo de JavaScript
-        products.forEach(product => {
-          const option = document.createElement("option");
-          option.value = product.id;
-          option.textContent = product.name;
-          productSelect.appendChild(option);
-        });
-      })
-      .catch(error => console.error("Error fetching products:", error));
-  }
-
-  //Funcion para trar data segun el select 
-  loadCode() {
-    const selectedValue = this.shadowRoot.getElementById("selectProd").value;
-    const codeInput = this.shadowRoot.getElementById("codeNumber");
-  
-    codeInput.value = selectedValue;
-    alert("This is codeinput value: " + codeInput.value);
-    
-    fetch(`http://localhost:3000/products?id=${selectedValue}`)
-  .then(response => response.json())
-  .then(products => {
-    if (products.length > 0) {
-      const product = products[0]; 
-      const value = product.value; 
-
-      const inputValue = this.shadowRoot.getElementById("unitValue");
-      inputValue.value = value;
-
-    } else {
-      alert("Product not found");
-    }
-  })
-  .catch(error => console.error("Error fetching product:", error));
-
-  }
-  
-  
-  
-
-  collectUserData() {
-    const userComponent = document.querySelector("user-component");
-
-    const name = userComponent.shadowRoot.getElementById("nameClient").value;
-    const lastName = userComponent.shadowRoot.getElementById("lastClient").value;
-    const address = userComponent.shadowRoot.getElementById("address").value;
-    const email = userComponent.shadowRoot.getElementById("email").value;
-
-    const codeProd = this.shadowRoot.getElementById("codeNumber").value;
-    const value = this.shadowRoot.getElementById("unitValue").value;
-    const amount = this.shadowRoot.getElementById("amountProd").value;
-
-    // Enviar los datos a través de un CustomEvent
-    userComponent.dispatchEvent(new CustomEvent("userDataSubmitted", {
-      detail: { name, lastName, address, email, codeProd, value, amount }
-    }));
+    this.shadowRoot
+      .getElementById("selectProd")
+      .addEventListener("change", () => {
+        loadCode(this);
+      });
   }
 }
 
