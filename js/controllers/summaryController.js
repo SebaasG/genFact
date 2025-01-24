@@ -19,10 +19,6 @@ export function dataTable(tableComponent, summaryComponent) {
   const iva = total * 0.19;
   const grandTotal = total + iva;
 
-  //   // Insertar valores en la tabla del summaryComponent
-  //   summaryComponent.shadowRoot.getElementById(
-  //     "subDet"
-  //   ).innerHTML = `Subtotal: $${total.toFixed(2)}`;
 
   const rowsFooter = summaryComponent.shadowRoot.querySelectorAll("tfoot tr");
 
@@ -65,4 +61,14 @@ export function observeTableChanges(tableComponent, callback) {
   observer.observe(tableBody, { childList: true });
 
   return observer;
+}
+
+export function saveInvoice(dataG) {
+  const dataSend = {
+      "codInvoice": dataG.numInvoice,
+      "DocUser": dataG.document,
+      "date": Date.now(),
+      
+      
+  };
 }
