@@ -1,10 +1,10 @@
-import { setTable} from "../controllers/tableController.js"
+import { setTable } from "../controllers/tableController.js";
 
 class TableComponent extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
-        this.shadowRoot.innerHTML = /*html */ `
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this.shadowRoot.innerHTML = /*html */ `
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
         <table class="table">
           <thead>
@@ -28,34 +28,31 @@ class TableComponent extends HTMLElement {
           </tbody>
         </table>
         `;
-     
-    }
-    prepareTableData(userData){
-      const tableData= [];
-      for (const item of userData.items){
-        tableData.push({
-          code: item.code,
-          name: item.name,
-          value: item.value,
-          amount: item.amount,
-          subTotal: item.value * item.amount
-        });
-        return tableData;
-      }
-
-    }
-
-    connectedCallback() {
-      const userComponent = document.querySelector("user-component");
-
-      userComponent.addEventListener("userDataSubmitted", (event) => {
-          console.log("Evento recibido:", event.detail);
-          const userData = event.detail;
-          alert(JSON.stringify(userData));
-          setTable(this, userData);
-         
+  }
+  prepareTableData(userData) {
+    const tableData = [];
+    for (const item of userData.items) {
+      tableData.push({
+        code: item.code,
+        name: item.name,
+        value: item.value,
+        amount: item.amount,
+        subTotal: item.value * item.amount,
       });
+      return tableData;
     }
+  }
+
+  connectedCallback() {
+    const userComponent = document.querySelector("user-component");
+
+    userComponent.addEventListener("userDataSubmitted", (event) => {
+      console.log("Evento recibido:", event.detail);
+      const userData = event.detail;
+      alert(JSON.stringify(userData));
+      setTable(this, userData);
+    });
+  }
 }
 
 customElements.define("table-component", TableComponent);
