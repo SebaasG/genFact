@@ -1,3 +1,5 @@
+import {collectUserData} from "./userController.js";
+
 export function dataTable(tableComponent, summaryComponent) {
   const rows = tableComponent.shadowRoot.querySelectorAll("tbody tr");
   const data = [];
@@ -43,7 +45,7 @@ export function dataTable(tableComponent, summaryComponent) {
 }
 
 export function observeTableChanges(tableComponent, callback) {
-  const tableBody = tableComponent.shadowRoot.querySelector("tbody");
+  const tableBody = document.querySelector("tbody");
 
   if (!tableBody) {
     console.error("No se encontró el cuerpo de la tabla.");
@@ -63,12 +65,16 @@ export function observeTableChanges(tableComponent, callback) {
   return observer;
 }
 
-export function saveInvoice(dataG) {
-  const dataSend = {
-      "codInvoice": dataG.numInvoice,
-      "DocUser": dataG.document,
-      "date": Date.now(),
-      
-      
-  };
+export function saveInvoice() {
+  const userComponent = document.querySelector("user-component");
+
+  if (!userComponent) {
+    console.error("user-component no encontrado.");
+    return;
+  }
+
+  const userdata = collectUserData(userComponent);
+  console.log(JSON.stringify(userdata));
+
+  // Puedes enviar estos datos a un servidor, almacenarlos, o procesarlos según sea necesario.
 }
