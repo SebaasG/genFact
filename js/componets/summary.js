@@ -13,15 +13,21 @@ class SummaryComponent extends HTMLElement {
           </div>
           <div class="card-body">
             <table class="table table-bordered">
+              <thead>
+              
+              </thead>
               <tfoot>
                 <tr>
-                  <th colspan="3" id="subDet">Subtotal</th>
+                  <th colspan="3">Subtotal</th>
+           
                 </tr>
                 <tr>
                   <th colspan="3">IVA (19%)</th>
+         
                 </tr>
                 <tr>
                   <th colspan="3">Total</th>
+        
                 </tr>
               </tfoot>
             </table>
@@ -34,21 +40,26 @@ class SummaryComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    // Asegúrate de que el componente de tabla esté referenciado correctamente
     const tableComponent = this.shadowRoot.querySelector("table");
     const payButton = this.shadowRoot.querySelector("#payBtn");
 
+    payButton.addEventListener("click", () => {
+      saveInvoice(this);
+    });
+
     observeTableChanges(tableComponent, () => {
-      dataTable(tableComponent, this);  // Llamada a actualizar el resumen
-      saveInvoice();  // Llamada a guardar la factura
+      dataTable(tableComponent, this);
     });
 
     // Escuchar evento custom desde userComponent
     const userComponent = document.querySelector("user-component");
-    userComponent.addEventListener("userDataSubmitted", (event) => {
-      const userData = event.detail;
-      console.log("User Data Received: ", userData);
-    });
+    if (userComponent) {
+      userComponent.addEventListener("userDataSubmitted", (event) => {
+        const userData = event.detail;
+        console.log("User Data Received: ", userData);
+        localStorage.setItem("dataParcial", JSON.stringify(userData));
+      });
+    }
   }
 }
 
