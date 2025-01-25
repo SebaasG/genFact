@@ -123,24 +123,18 @@
   ],
   "invoices": [
     {
-      "id": "100"
+      "id": "9c8f",
+      "invoiceId": "30312c1d2b0",
+      "clientId": "1052382113",
+      "total": 13804,
+      "date": "2025-01-25 17:05:16"
     },
     {
-      "id": "101"
-    },
-    {
-      "id": "0a5b",
-      "invoiceId": "303109a56b8",
+      "id": "83d3",
+      "invoiceId": "30312c8c7d8",
       "clientId": "111",
-      "total": 0,
-      "date": "2025-01-25"
-    },
-    {
-      "id": "a752",
-      "invoiceId": "303109a56b8",
-      "clientId": "111",
-      "total": 0,
-      "date": "2025-01-25"
+      "total": 4760,
+      "date": "2025-01-25 17:10:53"
     }
   ]
 }

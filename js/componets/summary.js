@@ -1,3 +1,4 @@
+// summaryComponent.js
 import { dataTable, observeTableChanges, saveInvoice } from "../controllers/summaryController.js";
 
 class SummaryComponent extends HTMLElement {
@@ -8,29 +9,15 @@ class SummaryComponent extends HTMLElement {
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
       <div class="container mt-5">
         <div class="card">
-          <div class="card-header text-center">
+          <div class="card-header text-center text-aling-right">
             <h3>Invoice Detail</h3>
           </div>
           <div class="card-body">
-            <table class="table table-bordered">
-              <thead>
-              
-              </thead>
-              <tfoot>
-                <tr>
-                  <th colspan="3">Subtotal</th>
-           
-                </tr>
-                <tr>
-                  <th colspan="3">IVA (19%)</th>
-         
-                </tr>
-                <tr>
-                  <th colspan="3">Total</th>
-        
-                </tr>
-              </tfoot>
-            </table>
+            <div class="mt-3">
+              <p><strong>Subtotal:</strong> <span id="subtotal">$0.00</span></p>
+              <p><strong>IVA (19%):</strong> <span id="iva">$0.00</span></p>
+              <p><strong>Total:</strong> <span id="total">$0.00</span></p>
+            </div>
           </div>
         </div>
         <div class="text-center mt-4">
@@ -40,23 +27,28 @@ class SummaryComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    const tableComponent = this.shadowRoot.querySelector("table");
     const payButton = this.shadowRoot.querySelector("#payBtn");
+    const tableComponent = document.querySelector("table-component");
+
+    if (tableComponent) {
+      const tableBody = tableComponent.shadowRoot.querySelector("tbody");
+      observeTableChanges(tableBody, () => {
+        dataTable(tableBody, this);
+      });
+    }
 
     payButton.addEventListener("click", () => {
+      const tableBody = tableComponent.shadowRoot.querySelector("tbody");
+      if (tableBody) {
+        dataTable(tableBody, this);
+      }
       saveInvoice(this);
     });
 
-    observeTableChanges(tableComponent, () => {
-      dataTable(tableComponent, this);
-    });
-
-    // Escuchar evento custom desde userComponent
     const userComponent = document.querySelector("user-component");
     if (userComponent) {
       userComponent.addEventListener("userDataSubmitted", (event) => {
         const userData = event.detail;
-        console.log("User Data Received: ", userData);
         localStorage.setItem("dataParcial", JSON.stringify(userData));
       });
     }

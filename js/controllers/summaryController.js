@@ -1,47 +1,24 @@
-export function dataTable(tableComponent, summaryComponent) {
-  const rows = tableComponent.shadowRoot.querySelectorAll("tbody tr");
-  const data = [];
+export function dataTable(tableBody, summaryComponent) {
   let total = 0;
 
-  rows.forEach((row) => {
+  tableBody.querySelectorAll("tr").forEach((row) => {
     const cells = row.querySelectorAll("td");
-
     if (cells.length >= 5) {
-      const rowData = {
-        code: cells[0].textContent.trim(),
-        name: cells[1].textContent.trim(),
-        value: parseFloat(cells[2].textContent.trim()) || 0,
-        amount: parseInt(cells[3].textContent.trim()) || 0,
-        subTotal: parseFloat(cells[4].textContent.trim()) || 0,
-      };
-
-      total += rowData.subTotal;
-      data.push(rowData);
+      const subTotal = parseFloat(cells[4].textContent.trim()) || 0;
+      total += subTotal;
     }
   });
 
   const iva = total * 0.19;
   const grandTotal = total + iva;
 
-  // Obtener los elementos dentro del shadow DOM del summaryComponent
-  const subtotalElement = summaryComponent.shadowRoot.querySelector("#subtotal");
-  const ivaElement = summaryComponent.shadowRoot.querySelector("#iva");
-  const totalElement = summaryComponent.shadowRoot.querySelector("#total");
-
-  if (subtotalElement && ivaElement && totalElement) {
-    subtotalElement.textContent = `$${total.toFixed(2)}`;
-    ivaElement.textContent = `$${iva.toFixed(2)}`;
-    totalElement.textContent = `$${grandTotal.toFixed(2)}`;
-  } else {
-    console.error("No se encontraron los elementos del resumen en el shadow DOM.");
-  }
-
-  return data;
+  // Actualizar los elementos del resumen en el shadow DOM de summaryComponent
+  summaryComponent.shadowRoot.getElementById("subtotal").textContent = `$${total}`;
+  summaryComponent.shadowRoot.getElementById("iva").textContent = `$${iva}`;
+  summaryComponent.shadowRoot.getElementById("total").textContent = `$${grandTotal}`;
 }
 
-export function observeTableChanges(tableComponent, callback) {
-  const tableBody = tableComponent.shadowRoot.querySelector("tbody");
-
+export function observeTableChanges(tableBody, callback) {
   if (!tableBody) {
     console.error("No se encontró el cuerpo de la tabla.");
     return;
@@ -57,13 +34,6 @@ export function observeTableChanges(tableComponent, callback) {
 }
 
 export async function saveInvoice(summaryComponent) {
-  const userComponent = document.querySelector("user-component");
-
-  if (!userComponent) {
-    console.error("user-component no encontrado.");
-    return;
-  }
-
   const dataString = localStorage.getItem("dataParcial");
 
   if (!dataString) {
@@ -74,17 +44,30 @@ export async function saveInvoice(summaryComponent) {
   try {
     const data = JSON.parse(dataString);
     const { numInvoice, document } = data;
-    const today = new Date().toISOString().split("T")[0];
 
-    // Obtener el total desde la tabla
+    // Obtener la fecha y hora actual en formato 'YYYY-MM-DD HH:MM:SS'
+    const now = new Date();
+    const formattedDate = now.toISOString().slice(0, 10);
+    const formattedTime = now.toLocaleTimeString("es-CO", {
+      hour12: false, 
+      hour: "2-digit", 
+      minute: "2-digit", 
+      second: "2-digit",
+    });
+
+    const fullDateTime = `${formattedDate} ${formattedTime}`;
+
+    // Obtener el total desde el resumen
     const totalElement = summaryComponent.shadowRoot.querySelector("#total");
-    const total = totalElement ? parseFloat(totalElement.textContent.replace(/\D/g, "")) : 0;
+    let total = totalElement ? parseFloat(totalElement.textContent.replace(/\D/g, "")) : 0;
+
+
 
     const invoiceData = {
       invoiceId: numInvoice,
-      clientId: document,
-      total,
-      date: today,
+      clientId: document.trim(), // Asegurando que el campo clientId no sea vacío por espacios
+      total: total, // Ahora el total es un número entero
+      date: fullDateTime,
     };
 
     console.log("Enviando datos:", invoiceData);
